@@ -1,6 +1,5 @@
 import { artifacts } from "hardhat";
 import type { Artifact } from "hardhat/types";
-
 const { expect } = require("chai");
 const { network, waffle, ethers } = require("hardhat");
 const { deployContract } = waffle;
@@ -34,26 +33,36 @@ let abiCoder = new AbiCoder();
 var web3 = new Web3(provider);
 
 export function shouldBehaveLikePancakeswap(): void {
-  const AMOUNT_OUT = 10;
+  const AMOUNT_OUT = 1;
   const AMOUNT_IN = 100;
   const WHALE = process.env.WETH_WHALE;
   const DAI = process.env.DAI;
   const WBTC = process.env.WBTC;
-  const TOKEN_OUT = DAI;
+  const CAKE = process.env.CAKE
+  const BTCB = process.env.BTCB
   const expectedSwapAmount = "557227237267357629";
+  const TOKEN_OUT = BTCB;
 
   let TestPancakeswap;
-  let pancakeswap;
+  let pancakeswap: any
   let receiver: { address: any };
   let other;
 
-  it("should swap eth for exact tokens", async function () {
-    // [other, receiver] = await ethers.getSigners();
+  beforeEach(async()=>{
     TestPancakeswap = await ethers.getContractFactory("Pancakeswap");
     pancakeswap = await TestPancakeswap.deploy();
+  });
 
+  it("should swap eth for exact tokens", async function () {
     const amounts = await pancakeswap.swappingETHForExactTokens(AMOUNT_OUT, TOKEN_OUT);
     console.log(`amounts of token received ${amounts}`);
   });
+
+  it("should swap exact eth for tokens", async function(){
+    const amountsOfTokens = await pancakeswap.swappingExactEthForTokens(AMOUNT_OUT, TOKEN_OUT);
+    console.log(`amounts of token received ${amountsOfTokens}`);
+  });
+
+  
 }
 // yarn test --network hardhat
